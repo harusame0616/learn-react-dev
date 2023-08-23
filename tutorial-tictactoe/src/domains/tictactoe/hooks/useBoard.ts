@@ -12,6 +12,7 @@ export default function useBoard({ rows, cols }: UseBoardProps) {
   const [board, _setBoard] = useState<SquareStatus[]>(
     new Array(rows * cols).fill(SquareStatusEnum.empty)
   );
+  const [histories, _setHistories] = useState<SquareStatus[][]>([]);
 
   // board が全て埋まっているかどうか
   const isBoardFull = board.every(
@@ -51,8 +52,20 @@ export default function useBoard({ rows, cols }: UseBoardProps) {
     _setBoard((prevBoard) => {
       const newBoard = [...prevBoard];
       newBoard[rowIndex * cols + colIndex] = status;
+
+      _setHistories((prevHistories) => [...prevHistories, newBoard]);
       return newBoard;
     });
+  }
+
+  function revertTo(index: number) {
+    console.log({ len: histories.length, index });
+    if (index >= histories.length || index < 0) {
+      throw RangeError("Index out of range");
+    }
+
+    const history = [...histories[index]];
+    _setBoard(history);
   }
 
   // 対象の square に stone を置く
@@ -70,5 +83,7 @@ export default function useBoard({ rows, cols }: UseBoardProps) {
     put,
     getSquareStatus,
     isBoardFull,
+    histories: histories as ReadonlyArray<SquareStatus[]>,
+    revertTo,
   };
 }

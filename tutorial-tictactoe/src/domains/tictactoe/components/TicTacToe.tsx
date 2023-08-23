@@ -10,10 +10,11 @@ type TicTacToeProps = {
 };
 
 export default function TicTacToe({ size = 3 }: TicTacToeProps) {
-  const { put, getSquareStatus, board, isBoardFull } = useBoard({
-    rows: size,
-    cols: size,
-  });
+  const { put, getSquareStatus, board, isBoardFull, histories, revertTo } =
+    useBoard({
+      rows: size,
+      cols: size,
+    });
 
   const [currentStone, setCurrentStone] = useState<Stone>(StoneEnum.o);
 
@@ -113,13 +114,26 @@ export default function TicTacToe({ size = 3 }: TicTacToeProps) {
   return (
     <div>
       <div className="mb-2">current turn: {currentStone}</div>
-      <Board
-        cols={size}
-        rows={size}
-        board={board}
-        lock={isFinished}
-        onSquareClick={putStone}
-      />
+      <div className="flex gap-2">
+        <div>
+          <Board
+            cols={size}
+            rows={size}
+            board={board}
+            lock={isFinished}
+            onSquareClick={putStone}
+          />
+        </div>
+        <ul>
+          {histories.map((_, index) => {
+            return (
+              <li key={index}>
+                <button onClick={() => revertTo(index)}>turn {index}</button>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
       <div className="mt-2">
         {winner && <div>winner :{winner}</div>}
         {isDraw && <div>draw</div>}

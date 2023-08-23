@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { SquareStatus, SquareStatusEnum } from "../models/board";
 
 export type SquareProps = {
@@ -13,10 +14,12 @@ const displayMarkMap: Record<SquareStatus, string> = {
   [SquareStatusEnum.x]: "✘",
 };
 
-export default function Square({ status, onClick }: SquareProps) {
+function Square({ status, onClick }: SquareProps) {
   return (
     <button className="w-8 h-8 border" onClick={onClick}>
       {displayMarkMap[status]}
     </button>
   );
 }
+
+export default memo(Square);
